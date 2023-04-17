@@ -1,13 +1,18 @@
-#!/bin/sh
+#!/bin/bash
+
 set -e
 
+envsubst < /etc/nginx/default.conf > /etc/nginx/default.conf;
+
 if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ]; then
-    set -- varnishd \
+    set -- \
+        nginx /etc/nginx.conf; \
+        varnishd \
         -F \
         -f /etc/varnish/default.vcl \
-        -a http=:${VARNISH_HTTP_PORT:-80},HTTP \
+        -a http=:80,HTTP \
         -p feature=+http2 \
-        -s malloc,$VARNISH_SIZE \
+        -s malloc,$VARNISH_SIZE; \
         "$@"
 fi
 
