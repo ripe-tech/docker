@@ -23,6 +23,7 @@ RUN apt-get -y update && apt-get -y upgrade &&\
 
 COPY docker-entrypoint.sh /
 COPY nginx.default.template /
+COPY varnish.default.template /
 
 RUN set -e; \
     export DEBIAN_FRONTEND=noninteractive; \
