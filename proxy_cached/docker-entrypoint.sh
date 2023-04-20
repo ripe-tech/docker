@@ -2,7 +2,7 @@
 
 set -e
 
-if [[ -f "/etc/varnish/default.vcl" ]]; then
+if [[ ! -f "/etc/varnish/default.vcl" ]]; then
     cp /varnish.default.template /etc/varnish/default.vcl
 fi
 
