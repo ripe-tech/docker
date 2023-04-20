@@ -41,6 +41,8 @@ RUN set -e; \
         pkg-config \
         python3-docutils; \
     \
+    rm /etc/varnish/default.vcl; \
+    \
     rm /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default; \
     touch /etc/nginx/default.conf; \
     sed -i '/sites-enabled.*$/i \\tinclude \/etc\/nginx\/default\.conf;' /etc/nginx/nginx.conf; \
