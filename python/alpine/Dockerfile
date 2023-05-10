@@ -1,4 +1,4 @@
-FROM alpine:3.17.3
+FROM alpine:3.18
 
 LABEL version="1.0"
 LABEL maintainer="Platforme <development@platforme.com>"
