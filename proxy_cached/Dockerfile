@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 LABEL version="1.0"
 LABEL maintainer="Platforme <development@platforme.com>"
