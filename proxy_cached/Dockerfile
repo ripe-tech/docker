@@ -6,8 +6,8 @@ LABEL maintainer="Platforme <development@platforme.com>"
 EXPOSE 80
 EXPOSE 443
 
-ARG VARNISH_MODULES_VERSION=0.17.1
-ARG VARNISH_MODULES_SHA512SUM=c05c3e9d560b319b1eb1ca03bb3626989ed92c7d8d8eeb3f895b0a8f69639e9497403c1797a7936c4a7819c08f36e9cbf32b7e60661bfd584aeed174822a6565
+ARG VARNISH_MODULES_VERSION=0.20.0
+ARG VARNISH_MODULES_SHA512SUM=e63d6da8f63a5ce56bc7a5a1dd1a908e4ab0f6a36b5bdc5709dca2aa9c0b474bd8a06491ed3dee23636d335241ced4c7ef017b57413b05792ad382f6306a0b36
 ARG VARNISH_MODULES_QUERYFILTER_VERSION=1.0.1
 ARG VARNISH_MODULES_QUERYFILTER_SHA512SUM=6c3178d656dfffa7f515afc5d01e00d86b4149e9e61e8024b524e04a427cf3875a918f03999a9bbf4e762ec684d8d193aa03b8d36c1291a825834905802ecc32
 ARG TOOLBOX_COMMIT=96bab07cf58b6e04824ffec608199f1780ff0d04
@@ -53,7 +53,7 @@ RUN set -e; \
     git checkout $TOOLBOX_COMMIT; \
     cp install-vmod/install-vmod /usr/local/bin/; \
     \
-    install-vmod https://github.com/varnish/varnish-modules/archive/refs/tags/varnish-modules-$VARNISH_MODULES_VERSION.tar.gz $VARNISH_MODULES_SHA512SUM; \
+    install-vmod https://github.com/varnish/varnish-modules/releases/download/$VARNISH_MODULES_VERSION/varnish-modules-$VARNISH_MODULES_VERSION.tar.gz $VARNISH_MODULES_SHA512SUM; \
     \
     chown varnish /var/lib/varnish; \
     apt-get -y purge --auto-remove \
