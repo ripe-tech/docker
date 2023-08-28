@@ -34,8 +34,6 @@ RUN set -e; \
     tree ~builder/packages/; \
     apk add --allow-untrusted ~builder/packages/testing/**/varnish-modules-0.22.0-r0.apk; \
     \
-    rm /etc/varnish/default.vcl; \
-    \
     rm /etc/nginx/http.d/default.conf; \
     nginx -t -c /etc/nginx/nginx.conf; \
     \
