@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM alpine:3.18
 
 LABEL version="1.0"
 LABEL maintainer="Platforme <development@platforme.com>"
@@ -6,70 +6,44 @@ LABEL maintainer="Platforme <development@platforme.com>"
 EXPOSE 80
 EXPOSE 443
 
-ARG VARNISH_MODULES_VERSION=0.20.0
-ARG VARNISH_MODULES_SHA512SUM=e63d6da8f63a5ce56bc7a5a1dd1a908e4ab0f6a36b5bdc5709dca2aa9c0b474bd8a06491ed3dee23636d335241ced4c7ef017b57413b05792ad382f6306a0b36
-ARG VARNISH_MODULES_QUERYFILTER_VERSION=1.0.1
-ARG VARNISH_MODULES_QUERYFILTER_SHA512SUM=6c3178d656dfffa7f515afc5d01e00d86b4149e9e61e8024b524e04a427cf3875a918f03999a9bbf4e762ec684d8d193aa03b8d36c1291a825834905802ecc32
-ARG TOOLBOX_COMMIT=96bab07cf58b6e04824ffec608199f1780ff0d04
+ARG APORTS_COMMIT=7843f08683dff0ce67394eb8be2f58f598606199
 
 ENV SERVER_NAME=localhost
 ENV PROXY_PROTO=https://
 ENV PROXY_HOST=app.platforme.com
 ENV VARNISH_SIZE=1G
 
-RUN apt-get -y update && apt-get -y upgrade &&\
-    apt-get -y --no-install-recommends install gettext nginx varnish varnish-modules &&\
-    apt-get -y clean && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache envsubst varnish nginx
 
 COPY docker-entrypoint.sh /
 COPY nginx.default.template /
 COPY varnish.default.template /
 
-RUN set -e; \
-    export DEBIAN_FRONTEND=noninteractive; \
-    export DEBCONF_NONINTERACTIVE_SEEN=true; \
-    apt-get -y update; apt-get -y install \
-        automake \
-        build-essential \
-        ca-certificates \
-        curl \
-        git \
-        libgetdns10 \
-        libgetdns-dev \
-        libtool \
-        libvarnishapi-dev \
-        pkg-config \
-        python3-docutils; \
+RUN set -e;\
+    apk add --virtual build -q --no-progress --update alpine-sdk sudo; \
+    \
+    adduser -D builder; \
+    echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder; \
+    addgroup builder abuild; \
+    su builder -c "abuild-keygen -nai"; \
+    git clone https://gitlab.alpinelinux.org/alpine/aports.git; \
+    cd aports; git checkout $APORTS_COMMIT; \
+    cd testing/varnish-modules; \
+    chown builder -R .; \
+    su builder -c "abuild -r"; \
+    tree ~builder/packages/; \
+    apk add --allow-untrusted ~builder/packages/testing/**/varnish-modules-0.22.0-r0.apk; \
+    echo -e 'vcl 4.1;\nbackend default none;' > /etc/varnish/default.vcl; \
     \
     rm /etc/varnish/default.vcl; \
     \
-    rm /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default; \
-    touch /etc/nginx/default.conf; \
-    sed -i '/sites-enabled.*$/i \\tinclude \/etc\/nginx\/default\.conf;' /etc/nginx/nginx.conf; \
+    rm /etc/nginx/http.d/default.conf; \
     nginx -t -c /etc/nginx/nginx.conf; \
     \
-    cd /tmp; \
-    git clone https://github.com/varnish/toolbox.git; cd toolbox; \
-    git checkout $TOOLBOX_COMMIT; \
-    cp install-vmod/install-vmod /usr/local/bin/; \
-    \
-    install-vmod https://github.com/varnish/varnish-modules/releases/download/$VARNISH_MODULES_VERSION/varnish-modules-$VARNISH_MODULES_VERSION.tar.gz $VARNISH_MODULES_SHA512SUM; \
-    \
-    chown varnish /var/lib/varnish; \
-    apt-get -y purge --auto-remove \
-        automake \
-        build-essential \
-        ca-certificates \
-        curl \
-        git \
-        libgetdns10 \
-        libgetdns-dev \
-        libtool \
-        libvarnishapi-dev \
-        pkg-config \
-        python3-docutils; \
-    apt-get -y clean; \
-    rm -rf /var/lib/apt/lists/* /tmp/toolbox /usr/lib/varnish/vmods/libvmod_*.la;
+    apk del --no-network build; \
+    rm -rf ~builder /packages /aports /etc/sudoers.d/builder; \
+    deluser --remove-home builder; \
+    chown varnish /var/lib/varnish;
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
 

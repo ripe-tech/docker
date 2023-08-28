@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -6,7 +6,7 @@ if [[ ! -f "/etc/varnish/default.vcl" ]]; then
     cp /varnish.default.template /etc/varnish/default.vcl
 fi
 
-envsubst '$SERVER_NAME$PROXY_PROTO$PROXY_HOST' < /nginx.default.template > /etc/nginx/default.conf;
+envsubst '$SERVER_NAME$PROXY_PROTO$PROXY_HOST' < /nginx.default.template > /etc/nginx/http.d/default.conf;
 
 if [ "$#" -eq 0 ] ; then
     nginx -c /etc/nginx/nginx.conf;
