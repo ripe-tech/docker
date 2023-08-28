@@ -13,15 +13,15 @@ ENV PROXY_PROTO=https://
 ENV PROXY_HOST=app.platforme.com
 ENV VARNISH_SIZE=1G
 
-RUN apk add --no-cache envsubst varnish nginx
-
 COPY docker-entrypoint.sh /
 COPY nginx.default.template /
 COPY varnish.default.template /
 
 RUN set -e;\
-    apk add --virtual build -q --no-progress --update alpine-sdk sudo; \
     \
+    apk add --no-cache envsubst varnish nginx; \
+    \
+    apk add --virtual build -q --no-progress --update alpine-sdk sudo; \
     adduser -D builder; \
     echo "builder ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder; \
     addgroup builder abuild; \
@@ -33,7 +33,6 @@ RUN set -e;\
     su builder -c "abuild -r"; \
     tree ~builder/packages/; \
     apk add --allow-untrusted ~builder/packages/testing/**/varnish-modules-0.22.0-r0.apk; \
-    echo -e 'vcl 4.1;\nbackend default none;' > /etc/varnish/default.vcl; \
     \
     rm /etc/varnish/default.vcl; \
     \
