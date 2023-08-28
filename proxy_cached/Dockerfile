@@ -17,7 +17,7 @@ COPY docker-entrypoint.sh /
 COPY nginx.default.template /
 COPY varnish.default.template /
 
-RUN set -e;\
+RUN set -e; \
     \
     apk add --no-cache envsubst varnish nginx; \
     \
