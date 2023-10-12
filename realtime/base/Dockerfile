@@ -18,7 +18,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # base dependency install
 RUN apt-get update &&\
-    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -q -y --no-install-recommends curl wget gnupg gnupg2 ca-certificates git build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev rclone
+    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -q -y --no-install-recommends curl wget jq gnupg gnupg2 ca-certificates git build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev rclone
 
 # install python and poetry with pyenv
 RUN git clone https://github.com/pyenv/pyenv.git /pyenv && \
