@@ -30,6 +30,7 @@ RUN set -e; \
     cd aports; git checkout $APORTS_COMMIT; \
     cd testing/varnish-modules; \
     chown builder -R .; \
+    sed -i 's/~=/>=/g' APKBUILD; \
     su builder -c "abuild -r"; \
     tree ~builder/packages/; \
     apk add --allow-untrusted ~builder/packages/testing/**/varnish-modules-0.22.0-r0.apk; \
