@@ -43,7 +43,7 @@ RUN wget -c -O KTX.deb https://github.com/KhronosGroup/KTX-Software/releases/dow
     dpkg -i KTX.deb && \
     rm KTX.deb
 
-# creat realtime user
+# create realtime user
 RUN groupadd --gid 10000 realtime && useradd --uid 10000 --gid 10000 --shell /bin/bash --create-home realtime
 
 # install python and poetry with pyenv
