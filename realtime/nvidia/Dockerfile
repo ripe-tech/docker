@@ -13,6 +13,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV HOME="/home/realtime"
 ENV PYENV_ROOT="$HOME/.pyenv"
 ENV PATH="$PYENV_ROOT/shims:$PATH"
+ENV NVIDIA_DRIVER_CAPABILITIES=all
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
